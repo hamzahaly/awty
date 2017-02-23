@@ -121,7 +121,7 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, MessageBroadcastReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, 1000, AlarmManager., pendingIntent);
+        //alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, 1000, AlarmManager., pendingIntent);
         Toast.makeText(this, "Alarm set in 1 second", Toast.LENGTH_SHORT).show();
 
     }

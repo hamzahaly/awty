@@ -16,6 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/message_text"
+        android:textAlignment="center"
         android:hint="Message goes here"/>
 
     <EditText
@@ -23,18 +24,23 @@
         android:layout_height="wrap_content"
         android:id="@+id/phone_text"
         android:inputType="phone"
+        android:layout_gravity="center"
+        android:textAlignment="center"
         android:hint="Phone Number"/>
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/minutes_text"
+        android:layout_gravity="center"
         android:hint="Minutes"
+        android:textAlignment="center"
         android:inputType="number"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
         android:layout_gravity="center"
         android:id="@+id/start_button"
         android:text="Start"

@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-    public MyReceiver receiver;
+    //public MyReceiver receiver;
     private Boolean flag = false;
 
     @Override
@@ -25,7 +25,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setupServiceReceiver();
+        final AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         final EditText message = (EditText) findViewById(R.id.message_text);
         final EditText phoneNumber = (EditText) findViewById(R.id.phone_text);
@@ -36,7 +36,10 @@ public class MainActivity extends Activity {
         startButton.setEnabled(false);
         startButton.setClickable(false);
 
-        final Intent intent = new Intent(this, SendMessagesService.class);
+        final Intent intent = new Intent(this, MessageBroadcastReceiver.class);
+
+        final PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, 0);
+
         message.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -89,54 +92,35 @@ public class MainActivity extends Activity {
                 } else {
                     startButton.setClickable(false);
                     startButton.setEnabled(false);
-                    Toast.makeText(getBaseContext(), "Please Enter Valid Values for Fields", Toast.LENGTH_SHORT).show();
                 }
                 return false;
             }
         });
 
+        //Start button to begin sending messages
         startButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 String i = (String) startButton.getTag();
                 Log.v("TAG", "" + i);
-                intent.putExtra("Minutes", minutes.getText().toString());
+
                 intent.putExtra("Message", message.getText().toString());
-                intent.putExtra("receiver", receiver);
-                startService(intent);
+                intent.putExtra("Phone", phoneNumber.getText().toString());
+
                 if (i == "1") {
                     startButton.setText("Start");
                     view.setTag("0");
-                    //sendMessage();
+                    alarmManager.cancel(pendingIntent);
                 } else {
                     startButton.setText("Stop");
                     view.setTag("1");
-                    sendMessage();
+                    int val = Integer.parseInt(minutes.getText().toString());
+                    sendMessage(val, alarmManager, pendingIntent);
                 }
-
             }
         });
     }
 
-    public void sendMessage() {
-        Intent intent = new Intent(this, MessageBroadcastReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        //alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, 1000, AlarmManager., pendingIntent);
-        Toast.makeText(this, "Alarm set in 1 second", Toast.LENGTH_SHORT).show();
-
-    }
-
-    public void setupServiceReceiver() {
-        receiver = new MyReceiver(new Handler());
-
-        receiver.setReceiver(new MyReceiver.Receiver() {
-            @Override
-            public void onReceiveResult(int resultCode, Bundle resultData) {
-                if (resultCode == RESULT_OK) {
-                    String resultValue = resultData.getString("resultValue");
-                    Toast.makeText(MainActivity.this, resultValue, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+    public void sendMessage(int minutes, AlarmManager alarmManager, PendingIntent pendingIntent) {
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, 1000, 60000 * minutes, pendingIntent);
     }
 }

@@ -11,9 +11,15 @@ import android.widget.Toast;
  */
 
 public class MessageBroadcastReceiver extends BroadcastReceiver {
+
+    private String phoneNumber;
+    private String message;
+
     public void onReceive(Context context, Intent intent) {
         Log.v("TAG", "MessageBroadCastReceiever Fired");
+        phoneNumber = intent.getStringExtra("Phone");
+        message = intent.getStringExtra("Message");
 
-        Toast.makeText(context, "ALARM", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, phoneNumber + ": Are we there yet?", Toast.LENGTH_SHORT).show();
     }
 }

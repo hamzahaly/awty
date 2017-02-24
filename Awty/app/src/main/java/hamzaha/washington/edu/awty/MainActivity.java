@@ -9,10 +9,14 @@ import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -24,6 +28,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //setContentView(R.layout.custom_toast);
 
         final AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
@@ -39,6 +44,16 @@ public class MainActivity extends Activity {
         final Intent intent = new Intent(this, MessageBroadcastReceiver.class);
 
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, 0);
+
+        //Custom Toast
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.custom_toast_container));
+        final TextView caption =  (TextView) layout.findViewById(R.id.caption);
+        final TextView body = (TextView) layout.findViewById(R.id.body);
+        final Toast customToast = new Toast(getApplicationContext());
+        customToast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        customToast.setDuration(Toast.LENGTH_SHORT);
+        customToast.setView(layout);
 
         message.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -115,6 +130,8 @@ public class MainActivity extends Activity {
                     view.setTag("1");
                     int val = Integer.parseInt(minutes.getText().toString());
                     sendMessage(val, alarmManager, pendingIntent);
+                    caption.setText("Texting" + phoneNumber);
+                    body.setText("" + message);
                 }
             }
         });

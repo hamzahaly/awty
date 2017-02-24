@@ -22,4 +22,8 @@ public class MessageBroadcastReceiver extends BroadcastReceiver {
 
         Toast.makeText(context, phoneNumber + ": Are we there yet?", Toast.LENGTH_SHORT).show();
     }
+
+    public void sendMessage(Toast toast) {
+
+    }
 }

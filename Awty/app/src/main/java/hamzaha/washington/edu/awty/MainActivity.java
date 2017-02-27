@@ -1,13 +1,17 @@
 package hamzaha.washington.edu.awty;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -30,12 +34,23 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         //setContentView(R.layout.custom_toast);
 
+        Activity mainActivity = MainActivity.this;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (mainActivity.checkSelfPermission(Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+                Log.i("TAG", "Permission to send SMS not granted");
+
+                mainActivity.requestPermissions(new String[] {
+                        Manifest.permission.SEND_SMS }, 1);
+            }
+        }
+
+
         final AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         final EditText message = (EditText) findViewById(R.id.message_text);
         final EditText phoneNumber = (EditText) findViewById(R.id.phone_text);
         final EditText minutes = (EditText) findViewById(R.id.minutes_text);
-
 
         final Button startButton = (Button) findViewById(R.id.start_button);
         startButton.setEnabled(false);
@@ -132,6 +147,7 @@ public class MainActivity extends Activity {
                     sendMessage(val, alarmManager, pendingIntent);
                     caption.setText("Texting" + phoneNumber);
                     body.setText("" + message);
+
                 }
             }
         });

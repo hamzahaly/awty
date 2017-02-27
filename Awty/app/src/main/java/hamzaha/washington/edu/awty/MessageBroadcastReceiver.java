@@ -1,8 +1,12 @@
 package hamzaha.washington.edu.awty;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -16,11 +20,15 @@ public class MessageBroadcastReceiver extends BroadcastReceiver {
     private String message;
 
     public void onReceive(Context context, Intent intent) {
+        SmsManager smsManager = SmsManager.getDefault();
+
         Log.v("TAG", "MessageBroadCastReceiever Fired");
         phoneNumber = intent.getStringExtra("Phone");
         message = intent.getStringExtra("Message");
 
         Toast.makeText(context, phoneNumber + ": Are we there yet?", Toast.LENGTH_SHORT).show();
+
+        smsManager.sendTextMessage(phoneNumber, null, message, null, null);
     }
 
     public void sendMessage(Toast toast) {

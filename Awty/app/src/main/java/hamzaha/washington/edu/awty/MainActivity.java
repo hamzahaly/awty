@@ -1,11 +1,14 @@
 package hamzaha.washington.edu.awty;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -30,6 +33,15 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         //setContentView(R.layout.custom_toast);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (MainActivity.this.checkSelfPermission(Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+                Log.i("TAG", "Permission to send SMS not granted");
+
+                MainActivity.this.requestPermissions(new String[] {
+                        Manifest.permission.SEND_SMS }, 1);
+            }
+        }
+
         final AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         final EditText message = (EditText) findViewById(R.id.message_text);
@@ -41,9 +53,7 @@ public class MainActivity extends Activity {
         startButton.setEnabled(false);
         startButton.setClickable(false);
 
-        final Intent intent = new Intent(this, MessageBroadcastReceiver.class);
 
-        final PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, 0);
 
         //Custom Toast
         LayoutInflater inflater = getLayoutInflater();
@@ -118,8 +128,12 @@ public class MainActivity extends Activity {
                 String i = (String) startButton.getTag();
                 Log.v("TAG", "" + i);
 
+                Intent intent = new Intent(getApplicationContext(), MessageBroadcastReceiver.class);
+
                 intent.putExtra("Message", message.getText().toString());
                 intent.putExtra("Phone", phoneNumber.getText().toString());
+
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
 
                 if (i == "1") {
                     startButton.setText("Start");
